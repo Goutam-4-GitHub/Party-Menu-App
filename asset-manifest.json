@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Party-Menu-App/static/css/main.9397dd86.css",
+    "main.js": "/Party-Menu-App/static/js/main.ebeeffac.js",
+    "index.html": "/Party-Menu-App/index.html",
+    "main.9397dd86.css.map": "/Party-Menu-App/static/css/main.9397dd86.css.map",
+    "main.ebeeffac.js.map": "/Party-Menu-App/static/js/main.ebeeffac.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9397dd86.css",
+    "static/js/main.ebeeffac.js"
+  ]
+}
