@@ -1,12 +1,10 @@
 // src/App.js
 import React, { useState, useMemo } from "react";
-import { Routes,Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Filters from "./components/Filters";
 import DishList from "./components/DishList";
 import IngredientDetail from "./components/IngredientDetail";
-import dishes from "./data/mockDishes"; // ensure your mockDishes exports default
-
-
+import dishes from "./data/mockDishes";
 
 const CATEGORIES = ["STARTER", "MAIN COURSE", "DESSERT", "SIDES"];
 
@@ -43,71 +41,110 @@ export default function App() {
     return counts;
   }, [selectedDishes]);
 
-  function MainView() {
-    return (
-      <div className="app-container mobile-style">
-        <h1 className="page-title">Party Menu Selection</h1>
-
-        <Filters
-          categories={CATEGORIES}
-          activeCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          vegOnly={vegOnly}
-          onVegOnlyChange={setVegOnly}
-          nonVegOnly={nonVegOnly}
-          onNonVegOnlyChange={setNonVegOnly}
-          counts={selectedCountsByCategory}
-        />
-
-        <div className="selected-summary-row">
-          <div className="selected-summary-text">
-            {selectedCategory} Selected ({selectedCountsByCategory[selectedCategory] || 0})
-          </div>
-          <div className="toggles-inline">
-            <label className="tiny-toggle">
-              <input type="checkbox" checked={vegOnly} onChange={(e) => setVegOnly(e.target.checked)} />
-              <span className="toggle-label">Veg</span>
-            </label>
-            <label className="tiny-toggle">
-              <input type="checkbox" checked={nonVegOnly} onChange={(e) => setNonVegOnly(e.target.checked)} />
-              <span className="toggle-label">Non-Veg</span>
-            </label>
-          </div>
-        </div>
-
-        <DishList
-          dishes={filteredDishes}
-          onAddDish={onAddDish}
-          onRemoveDish={onRemoveDish}
-          selectedDishes={selectedDishes}
-        />
-
-        {/* sticky bottom bar */}
-        <div className="sticky-bottom">
-          <div className="sticky-left">
-            <div className="sticky-title">Total Dish Selected</div>
-            <div className="sticky-count">{totalSelected}</div>
-          </div>
-          <button
-            className="sticky-continue"
-            onClick={() => {
-              const names = selectedDishes.map((id) => dishes.find((d) => d.id === id)?.name).filter(Boolean);
-              alert(`Selected (${totalSelected}):\n` + (names.length ? names.join("\n") : "No items selected"));
-            }}
-          >
-            Continue
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <Routes>
-      <Route path="/" element={<MainView />} />
+      <Route
+        path="/"
+        element={
+          <MainView
+            CATEGORIES={CATEGORIES}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            vegOnly={vegOnly}
+            setVegOnly={setVegOnly}
+            nonVegOnly={nonVegOnly}
+            setNonVegOnly={setNonVegOnly}
+            selectedCountsByCategory={selectedCountsByCategory}
+            filteredDishes={filteredDishes}
+            onAddDish={onAddDish}
+            onRemoveDish={onRemoveDish}
+            selectedDishes={selectedDishes}
+            totalSelected={totalSelected}
+          />
+        }
+      />
       <Route path="/ingredient/:id" element={<IngredientDetail dishes={dishes} />} />
     </Routes>
+  );
+}
+
+// ✅ define outside App so it doesn't remount every render
+function MainView({
+  CATEGORIES,
+  selectedCategory,
+  setSelectedCategory,
+  searchTerm,
+  setSearchTerm,
+  vegOnly,
+  setVegOnly,
+  nonVegOnly,
+  setNonVegOnly,
+  selectedCountsByCategory,
+  filteredDishes,
+  onAddDish,
+  onRemoveDish,
+  selectedDishes,
+  totalSelected
+}) {
+  return (
+    <div className="app-container mobile-style">
+      <h1 className="page-title">Party Menu Selection</h1>
+
+      <Filters
+        categories={CATEGORIES}
+        activeCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        vegOnly={vegOnly}
+        onVegOnlyChange={setVegOnly}
+        nonVegOnly={nonVegOnly}
+        onNonVegOnlyChange={setNonVegOnly}
+        counts={selectedCountsByCategory}
+      />
+
+      <div className="selected-summary-row">
+        <div className="selected-summary-text">
+          {selectedCategory} Selected ({selectedCountsByCategory[selectedCategory] || 0})
+        </div>
+        <div className="toggles-inline">
+          <label className="tiny-toggle">
+            <input type="checkbox" checked={vegOnly} onChange={(e) => setVegOnly(e.target.checked)} />
+            <span className="toggle-label">Veg</span>
+          </label>
+          <label className="tiny-toggle">
+            <input type="checkbox" checked={nonVegOnly} onChange={(e) => setNonVegOnly(e.target.checked)} />
+            <span className="toggle-label">Non-Veg</span>
+          </label>
+        </div>
+      </div>
+
+      <DishList
+        dishes={filteredDishes}
+        onAddDish={onAddDish}
+        onRemoveDish={onRemoveDish}
+        selectedDishes={selectedDishes}
+      />
+
+      <div className="sticky-bottom">
+        <div className="sticky-left">
+          <div className="sticky-title">Total Dish Selected</div>
+          <div className="sticky-count">{totalSelected}</div>
+        </div>
+        <button
+          className="sticky-continue"
+          onClick={() => {
+            const names = selectedDishes
+              .map((id) => dishes.find((d) => d.id === id)?.name)
+              .filter(Boolean);
+            alert(`Selected (${totalSelected}):\n` + (names.length ? names.join("\n") : "No items selected"));
+          }}
+        >
+          Continue
+        </button>
+      </div>
+    </div>
   );
 }
